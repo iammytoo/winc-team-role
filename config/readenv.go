@@ -1,6 +1,12 @@
 package config
 
-import "github.com/joho/godotenv"
+import (
+	"encoding/csv"
+	"log"
+	"os"
+
+	"github.com/joho/godotenv"
+)
 
 type Environment struct {
 	Bot struct {
@@ -12,6 +18,10 @@ type Environment struct {
 	Role struct {
 		Dict map[string]string
 	}
+
+	Team struct {
+		Path string
+	}
 }
 
 func GetEnvironment() Environment {
@@ -20,7 +30,28 @@ func GetEnvironment() Environment {
 	if err != nil {
 		panic("Error loading .env file")
 	}
-	
+	Environment.Bot.TOKEN = os.Getenv("DISCORD_TOKEN")
+	Environment.Bot.CLIENT_ID = os.Getenv("DISCORD_CLIENT")
+	Environment.Bot.GUILD_ID = os.Getenv("DISCORD_GUILD")
+
+	Environment.Team.Path = os.Getenv("MEMBER_PATH")
+
+	path := os.Getenv("TEAM_PATH")
+
+	file, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	r := csv.NewReader(file)
+	rows, err := r.ReadAll()
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, v := range rows {
+		Environment.Role.Dict[v[0]] = v[1]
+	}
 	return Environment
 }
 
