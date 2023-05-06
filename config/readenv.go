@@ -49,6 +49,7 @@ func GetEnvironment() Environment {
 	if err != nil {
 		log.Fatal(err)
 	}
+	Environment.Role.Dict = make(map[string]string)
 	for _, v := range rows {
 		Environment.Role.Dict[v[0]] = v[1]
 	}

@@ -10,17 +10,13 @@ import (
 )
 
 func main() {
-
-	users := readrole.ReadRole("tmp/hoge.csv")
-	print(users)
 	s, err := discordgo.New("Bot " + config.Env.Bot.TOKEN)
+	users := readrole.ReadRole(config.Env.Team.Path, s)
 	if err != nil {
 		fmt.Println("DiscordのBotと接続できんかったyo >< :", err)
 		return
 	}
 	defer s.Close()
-
 	writerole.WriteRole(users, s)
 	fmt.Println("できたわよ")
-
 }

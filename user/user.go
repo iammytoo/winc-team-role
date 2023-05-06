@@ -7,15 +7,19 @@ import (
 )
 
 type User struct {
+	Name  string
 	Id    string
 	Teams []string
 	Roles []string
 }
 
-func CreateUser(id, row_teams string) User {
+func CreateUser(name, id, row_teams string) User {
 	var user = User{}
+	user.Name = name
 	user.Id = id
-	user.Teams = strings.Split(row_teams, ",")
+	if row_teams != ""{
+		user.Teams = strings.Split(row_teams, ", ")
+	}
 	user.setRoleIds()
 	return user
 }
@@ -23,8 +27,10 @@ func CreateUser(id, row_teams string) User {
 func (u *User) setRoleIds() {
 	var roles = []string{}
 	roles = append(roles, config.Env.Role.Dict["member"])
-	for _, k := range u.Teams {
-		roles = append(roles, config.Env.Role.Dict[k])
+	if len(u.Teams) != 0{
+		for _, k := range u.Teams {
+			roles = append(roles, config.Env.Role.Dict[k])
+		}
 	}
 	u.Roles = roles
 }
